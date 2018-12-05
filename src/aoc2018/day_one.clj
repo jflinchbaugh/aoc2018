@@ -1,4 +1,4 @@
-(ns aoc2018.core)
+(ns aoc2018.day-one)
 
 (def numbers [
   -10
@@ -966,46 +966,29 @@
 
 (day-one-part-one)
 
-(def numbers [1 2 -3])
-
-(def taken 10)
-
 (defn day-one-part-two
-  "find first frequency to repeat"
+  "find first frequency to repeat in a cycling set of changes"
   [numbers]
-  (loop [taken (count numbers)]
+  (loop
+    [
+      seen-freqs #{0}
+      last-freq 0
+      incoming (cycle numbers)
+    ]
     (let
       [
-        my-freqs
-        (->> numbers
-          cycle
-          (take taken)
-          freqs
-        )
-        dists
-        (->>
-          my-freqs
-          (group-by identity)
-          (map (fn [[k v]] [k (count v)]))
-          (filter (fn [[k v]] (> v 1)))
-        )
-        found-twice
-        (->>
-          dists
-          (map first)
-        )
+        candidate (+ last-freq (first incoming))
       ]
-      (do
-        ;(prn found-twice)
-        (cond
-          (= 1 (count found-twice)) (first found-twice)
-          (empty? found-twice) (recur (+ taken (count numbers)))
-          :else (recur (dec taken))
+      (if
+        (seen-freqs candidate)
+        candidate
+        (recur
+          (conj seen-freqs candidate)
+          candidate
+          (rest incoming)
         )
       )
     )
   )
 )
-
-(day-one-part-two numbers)
 
