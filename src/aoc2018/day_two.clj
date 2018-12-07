@@ -254,3 +254,41 @@
     "svosmkcitdbfiyxuphzgsraljq"
   ]
 )
+
+(defn filter-occurrences [n s]
+  (->>
+    s
+    seq
+    (group-by identity)
+    (filter (fn [[k v]] (= n (count v))))
+    (map first)
+  )
+)
+
+(defn count-occurrences [n s]
+  (->>
+    s
+    (filter-occurrences n)
+    count
+  )
+)
+
+(defn checksum [box-codes]
+  (reduce *
+    (map
+      (fn [c]
+        (->>
+          box-codes
+          (map
+            #(count-occurrences c %)
+          )
+          (filter #(< 0 %))
+          count
+        )
+      )
+      [2 3]
+    )
+  )
+)
+
+(checksum box-codes)
