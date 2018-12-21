@@ -292,3 +292,33 @@
 )
 
 (checksum box-codes)
+
+;; part 2
+
+(defn drop-at [n s]
+  (let [[f b] (split-at n s)]
+    (clojure.string/join (concat f (rest b)))
+  )
+)
+
+(defn common [codes]
+  (let
+    [
+      lr (range (count (first codes)))
+    ]
+    (->>
+      (for [l lr]
+        (filter-occurrences 2
+            (for [code codes]
+              (drop-at l code)
+            )
+        )
+      )
+      (filter (complement empty?))
+      flatten
+      first
+    )
+  )
+)
+
+(common box-codes)
