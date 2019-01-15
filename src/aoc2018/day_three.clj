@@ -1,8 +1,6 @@
 (ns aoc2018.day-three
-  :require '[clojure.string :as str]
+  (:require [clojure.string :as str])
 )
-
-(require '[clojure.string :as str])
 
 (def claims
   "#1 @ 146,196: 19x14
