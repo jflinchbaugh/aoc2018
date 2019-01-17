@@ -1338,3 +1338,110 @@
 )
 
 (day-three-part-1 claims)
+
+; part 2
+
+(defn expand-claims [claim-string]
+  (->>
+    claim-string
+    to-parcels
+    (map #(-> [(first %) (to-cells (map to-int (rest %)))]))
+  )
+)
+
+(defn parse-claims [claim-string]
+  (->>
+    claim-string
+    to-parcels
+    (map #(-> [(first %) (map to-int (rest %))]))
+  )
+)
+
+(parse-claims claims)
+
+(defn claims-to-boundaries [claim-string]
+  (->>
+    claim-string
+    parse-claims
+    (map (fn [[ k [ x y sx sy ]]] [ k [ x y (- (+ x sx) 1) (- (+ y sy) 1)]]))
+  )
+)
+
+(claims-to-boundaries claims)
+
+(defn overlaps
+  "from the claim string, list squares with overlaps"
+  [claim-string]
+  (->>
+    claim-string
+    expand-claims
+    (map second)
+    flatten-1
+    (group-by identity)
+    (filter (fn [[k v]] (< 1 (count v)))) ; keep groups with overlaps
+    (map first) ; keep only keys
+  )
+)
+
+(overlaps claims)
+
+(->>
+  claims
+  expand-claims
+  (take 10)
+)
+
+(count (expand-claims claims))
+
+(first
+  (filter
+    (fn [[k v]]
+      (not-any? (set (overlaps claims)) v)
+    )
+    (expand-claims claims)
+  )
+)
+
+(defn overlap? [[xa1 ya1 xa2 ya2] [xb1 yb1 xb2 yb2]]
+  (and
+    (or
+      (<= xa1 xb1 xa2)
+      (<= xb1 xa1 xb2)
+    )
+    (or
+      (<= ya1 yb1 ya2)
+      (<= yb1 ya1 yb2)
+    )
+  )
+)
+
+(overlap? [1 1 2 2] [2 1 3 2])
+(overlap? [1 1 2 2] [1 1 2 2])
+(overlap? [1 1 1 1] [1 2 1 2])
+
+(def with-overlaps
+  (let
+    [
+      boundaries (claims-to-boundaries claims)
+    ]
+    (->>
+      (for
+        [
+          claim1 boundaries
+          claim2 boundaries
+          :when
+          (and
+            (not (= claim1 claim2))
+            (overlap? (second claim1) (second claim2))
+          )
+        ]
+        (first claim1)
+      )
+      set
+    )
+  )
+)
+
+(with-overlaps "#100")
+
+(filter (complement with-overlaps) (map first (claims-to-boundaries claims)))
