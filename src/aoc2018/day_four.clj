@@ -1,4 +1,5 @@
-(ns aoc2018.day-four)
+(ns aoc2018.day-four
+  (:require [clojure.string :as str]))
 
 (def input "
   [1518-05-12 00:46] wakes up
@@ -1007,3 +1008,8 @@
   [1518-09-09 00:43] wakes up
   [1518-06-01 00:47] wakes up
 ")
+
+(defn to-lines [input]
+  (filter (complement str/blank?) (map str/trim (str/split input #"\n"))))
+
+(to-lines input)
