@@ -1012,4 +1012,10 @@
 (defn to-lines [input]
   (filter (complement str/blank?) (map str/trim (str/split input #"\n"))))
 
-(to-lines input)
+(defn to-record [line]
+  (let [m (re-matches #"\[(.*)\] (.*)" line)]
+    (zipmap [:datetime :message] (rest m))))
+
+(comment 
+  (map to-record (to-lines input))
+)
