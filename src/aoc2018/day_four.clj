@@ -1016,6 +1016,22 @@
   (let [m (re-matches #"\[(.*)\] (.*)" line)]
     (zipmap [:datetime :message] (rest m))))
 
-(comment 
-  (map to-record (to-lines input))
+(defn guard? [message]
+  (boolean (re-find #"Guard" message)))
+
+(defn guard-number [message]
+  (second (re-matches #"Guard #(\d+).*" message)))
+
+(comment
+
+  (guard-number "Guard #1 arrives")
+  (guard? "Guard #1 arrives")
+
+  (group-by #(guard-number (:message %))
+    (filter
+      #(guard? (:message %))
+      (sort-by
+        :datetime
+        (map to-record (to-lines input)))))
+
 )
