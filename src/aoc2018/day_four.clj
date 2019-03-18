@@ -1025,17 +1025,25 @@
 (defn date [datetime]
   (first (str/split datetime #" ")))
 
+(defn guard-by-date [m r]
+  (assoc m (:datetime r) (guard-number (:message r))))
+
+(defn date-guard-map [records]
+  (reduce
+   guard-by-date
+   {}
+   (filter
+     (comp guard? :message)
+     (sort-by
+       :datetime
+       records))))
+
 (comment
 
   (date "1234-12-34 12:12")
 
   (guard-number "Guard #1 arrives")
 
-  (group-by #(guard-number (:message %))
-    (filter
-      #(guard? (:message %))
-      (sort-by
-        :datetime
-        (map to-record (to-lines input)))))
+  (date-guard-map (map to-record (to-lines input)))
 
 )
