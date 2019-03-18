@@ -14,8 +14,8 @@ line2
 
 (deftest test-to-record
   (is (=
-        (to-record "[1518-05-12 00:46] wakes up")
-        {:datetime "1518-05-12 00:46" :message "wakes up"})))
+        {:datetime "1518-05-12 00:46" :message "wakes up"}
+        (to-record "[1518-05-12 00:46] wakes up"))))
 
 (deftest test-guard?
   (is (guard? "Guard #1 arrives"))
@@ -23,5 +23,8 @@ line2
   (is (not (guard? "falls asleep"))))
 
 (deftest test-guard-number
-  (is (= (guard-number "Guard #1 arrives") "1"))
+  (is (= "1" (guard-number "Guard #1 arrives")))
   (is (nil? (guard-number "not a guard"))))
+
+(deftest test-date
+  (is (= "1234" (date "1234 4443"))))

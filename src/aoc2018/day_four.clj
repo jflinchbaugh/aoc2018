@@ -1022,10 +1022,14 @@
 (defn guard-number [message]
   (second (re-matches #"Guard #(\d+).*" message)))
 
+(defn date [datetime]
+  (first (str/split datetime #" ")))
+
 (comment
 
+  (date "1234-12-34 12:12")
+
   (guard-number "Guard #1 arrives")
-  (guard? "Guard #1 arrives")
 
   (group-by #(guard-number (:message %))
     (filter
