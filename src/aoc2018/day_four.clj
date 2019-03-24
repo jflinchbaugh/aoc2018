@@ -1010,7 +1010,9 @@
 ")
 
 (defn to-lines [input]
-  (filter (complement str/blank?) (map str/trim (str/split input #"\n"))))
+  (filter (complement str/blank?)
+    (map str/trim
+      (str/split input #"\n"))))
 
 (defn to-record [line]
   (let [m (re-matches #"\[(.*)\] (.*)" line)]
