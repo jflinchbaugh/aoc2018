@@ -1047,5 +1047,6 @@
   (guard-number "Guard #1 arrives")
 
   (date-guard-map (map to-record (to-lines input)))
+  (->> input to-lines (map to-record) date-guard-map)
 
 )

@@ -28,3 +28,12 @@ line2
 
 (deftest test-date
   (is (= "1234" (date "1234 4443"))))
+
+(deftest test-guard-by-date
+  (is (=
+    {"dt" "10"}
+    (guard-by-date
+      nil
+      {
+        :datetime "dt",
+        :message "Guard #10 arrives"}))))
