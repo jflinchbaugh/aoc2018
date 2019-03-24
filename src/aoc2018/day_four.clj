@@ -1033,12 +1033,20 @@
 (defn date-guard-map [records]
   (reduce
    guard-by-date
-   {}
    (filter
      (comp guard? :message)
      (sort-by
        :datetime
        records))))
+
+(defn get-guard [m t]
+  (->> m
+       keys
+       sort
+       reverse
+       (filter #(>= 0 (compare % t)))
+       first
+       (get m)))
 
 (comment
 
