@@ -36,4 +36,11 @@ line2
       nil
       {
         :datetime "dt",
-        :message "Guard #10 arrives"}))))
+       :message "Guard #10 arrives"})))
+  (is (=
+        {"dt" "10", "existing" "11"}
+        (guard-by-date
+          {"existing" "11"} 
+          {
+           :datetime "dt",
+           :message "Guard #10 arrives"}))))
