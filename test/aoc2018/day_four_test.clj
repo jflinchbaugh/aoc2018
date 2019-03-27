@@ -5,12 +5,12 @@
 (deftest test-to-lines
   (testing "to-lines splits, trims, and drops blank lines"
     (is (=
-         (to-lines "
+          '("line1" "line2")
+          (to-lines "
   line1
 
 line2
-     ")
-         '("line1" "line2")))))
+     ")))))
 
 (deftest test-to-record
   (is (=
@@ -42,8 +42,12 @@ line2
         {"existing" "11"}
         {:datetime "dt",
          :message "Guard #10 arrives"}))))
+
 (deftest test-get-guard
   (let [m {"2019-01-01 01:00" "g", "2019-01-01 23:59" "h"}]
+    (is
+     (= "g"
+        (get-guard m "2019-01-01 01:00")))
     (is
      (= "g"
         (get-guard m "2019-01-01 02:00")))

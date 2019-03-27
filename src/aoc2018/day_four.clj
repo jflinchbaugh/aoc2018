@@ -1042,14 +1042,19 @@
   )
 )
 
-(defn get-guard [m t]
-  (->> m
-       keys
-       sort
-       reverse
-       (filter #(>= 0 (compare % t)))
-       first
-       (get m)))
+(defn get-guard
+  (
+   [t]
+   (get-guard (->> input to-lines (map to-record) date-guard-map) t))
+  ([m t]
+   (->> m
+     keys
+     reverse
+     (filter
+     #(>= 0 (do (prn % ":" t) (compare % t))))
+     first
+     (get m)
+     )))
 
 (comment
 
@@ -1067,5 +1072,7 @@
    (map to-record)
    date-guard-map
    )
+
+  (get-guard "1518-03-09 00:05")
 
 )
