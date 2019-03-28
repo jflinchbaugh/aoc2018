@@ -60,3 +60,8 @@ line2
     (is
      (nil?
       (get-guard nil "2019-01-01 00:00")))))
+
+(deftest test-with-guard-by-date
+  (is
+    (= {:datetime "dt" :message "m" :guard "guard"}
+      (with-guard-by-date #(if (= (:datetime %) "dt") "guard") {:datetime "dt" :message "m"}))))

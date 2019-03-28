@@ -1049,12 +1049,16 @@
   ([m t]
    (->> m
      keys
+     sort
      reverse
      (filter
-     #(>= 0 (do (prn % ":" t) (compare % t))))
+       #(>= 0 (compare % t)))
      first
      (get m)
      )))
+
+(defn with-guard-by-date [lookup record]
+  (assoc record :guard (lookup record)))
 
 (comment
 
@@ -1074,5 +1078,17 @@
    )
 
   (get-guard "1518-03-09 00:05")
+
+  (->>
+    input
+    to-lines
+    (map to-record)
+    (map
+      (partial with-guard-by-date
+        #(get-guard
+          (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
+    )
+
+  (->> input to-lines first to-record (with-guard-by-date get-guard))
 
 )
