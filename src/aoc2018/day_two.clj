@@ -282,7 +282,7 @@
           (map
             #(count-occurrences c %)
           )
-          (filter #(< 0 %))
+          (filter pos?)
           count
         )
       )
