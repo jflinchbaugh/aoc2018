@@ -68,3 +68,15 @@ line2
   (is
     (= {:datetime "dt" :message "m" :guard nil}
       (with-guard-by-date #(and % nil) {:datetime "dt" :message "m"}))))
+
+(deftest test-minute
+  (is
+    (= 2 (minute {:datetime "date 01:02"})))
+  (is
+    (nil? (minute {:datetime "bad"}))))
+
+(deftest test-parse-int
+  (is (= 0 (parse-int "0")))
+  (is (nil? (parse-int "bad")))
+  (is (nil? (parse-int nil)))
+  )

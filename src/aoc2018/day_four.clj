@@ -1060,15 +1060,29 @@
 (defn with-guard-by-date [lookup record]
   (assoc record :guard (lookup record)))
 
+(defn parse-int [s]
+  (if (and (not (nil? s)) (re-matches #"\d+" s))
+      (Integer/parseInt s)))
+
+(defn minute
+  "pull the minute out of a record"
+  [record]
+  (->>
+    record
+    :datetime
+    (re-matches #".*:(\d+)")
+    last
+    parse-int
+    ))
+
+(defn with-minute
+  "augment a record with a :minute from the :datetime"
+  [record]
+  (assoc record :minute (minute record)))
+
 (comment
-
-  (date "1234-12-34 12:12")
-
-  (guard-number "Guard #1 arrives")
-
-  (date-guard-map (map to-record (to-lines input)))
-
-  (->> input to-lines (map to-record) date-guard-map)
+  
+  (with-minute {:datetime "1518-03-03 01:00"})
 
   (->>
    input
@@ -1076,8 +1090,6 @@
    (map to-record)
    date-guard-map
    )
-
-  (get-guard "1518-03-09 00:05")
 
   (->>
     input
@@ -1087,8 +1099,8 @@
       (partial with-guard-by-date
         #(get-guard
           (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
+    (map with-minute)
+    (group-by :guard)
     )
-
-  (->> input to-lines first to-record (with-guard-by-date #(get-guard (:datetime %))))
 
 )
