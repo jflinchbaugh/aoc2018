@@ -5,8 +5,8 @@
 (deftest test-to-lines
   (testing "to-lines splits, trims, and drops blank lines"
     (is (=
-          '("line1" "line2")
-          (to-lines "
+         '("line1" "line2")
+         (to-lines "
   line1
 
 line2
@@ -64,4 +64,7 @@ line2
 (deftest test-with-guard-by-date
   (is
     (= {:datetime "dt" :message "m" :guard "guard"}
-      (with-guard-by-date #(if (= (:datetime %) "dt") "guard") {:datetime "dt" :message "m"}))))
+      (with-guard-by-date #(if (= (:datetime %) "dt") "guard") {:datetime "dt" :message "m"})))
+  (is
+    (= {:datetime "dt" :message "m" :guard nil}
+      (with-guard-by-date #(and % nil) {:datetime "dt" :message "m"}))))
