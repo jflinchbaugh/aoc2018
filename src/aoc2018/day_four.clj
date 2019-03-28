@@ -1094,7 +1094,9 @@
   (->>
     input
     to-lines
+    sort
     (map to-record)
+    (filter (complement guard?))
     (map
       (partial with-guard-by-date
         #(get-guard
