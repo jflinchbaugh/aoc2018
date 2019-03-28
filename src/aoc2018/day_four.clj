@@ -1089,5 +1089,6 @@
           (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
     )
 
-  (->> input to-lines first to-record (with-guard-by-date get-guard))
+  (->> input to-lines first to-record (with-guard-by-date #(get-guard (:datetime %))))
+
 )
