@@ -1010,7 +1010,7 @@
 ")
 
 (defn to-lines [input]
-  (filter (complement str/blank?)
+  (remove str/blank?
     (map str/trim
       (str/split input #"\n"))))
 
@@ -1090,5 +1090,4 @@
     )
 
   (->> input to-lines first to-record (with-guard-by-date get-guard))
-
 )
