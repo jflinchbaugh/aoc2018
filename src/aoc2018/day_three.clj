@@ -1297,7 +1297,7 @@
   [in]
   (map
     #(str/split % #"[ @,:x]+")
-    (filter (complement #(= "" %)) (map str/trim (str/split in #"\n")))
+    (remove #(= "" %) (map str/trim (str/split in #"\n")))
   )
 )
 
@@ -1337,7 +1337,9 @@
   )
 )
 
-(day-three-part-1 claims)
+(comment
+  (day-three-part-1 claims)
+)
 
 ; part 2
 
@@ -1357,17 +1359,13 @@
   )
 )
 
-(parse-claims claims)
-
 (defn claims-to-boundaries [claim-string]
   (->>
     claim-string
     parse-claims
-    (map (fn [[ k [ x y sx sy ]]] [ k [ x y (- (+ x sx) 1) (- (+ y sy) 1)]]))
+    (map (fn [[ k [ x y sx sy ]]] [ k [ x y (dec (+ x sx)) (dec (+ y sy))]]))
   )
 )
-
-(claims-to-boundaries claims)
 
 (defn overlaps
   "from the claim string, list squares with overlaps"
@@ -1380,25 +1378,6 @@
     (group-by identity)
     (filter (fn [[k v]] (< 1 (count v)))) ; keep groups with overlaps
     (map first) ; keep only keys
-  )
-)
-
-(overlaps claims)
-
-(->>
-  claims
-  expand-claims
-  (take 10)
-)
-
-(count (expand-claims claims))
-
-(first
-  (filter
-    (fn [[k v]]
-      (not-any? (set (overlaps claims)) v)
-    )
-    (expand-claims claims)
   )
 )
 
@@ -1415,33 +1394,54 @@
   )
 )
 
-(overlap? [1 1 2 2] [2 1 3 2])
-(overlap? [1 1 2 2] [1 1 2 2])
-(overlap? [1 1 1 1] [1 2 1 2])
+(comment 
 
-(def with-overlaps
-  (let
-    [
-      boundaries (claims-to-boundaries claims)
-    ]
-    (->>
-      (for
-        [
-          claim1 boundaries
-          claim2 boundaries
-          :when
-          (and
-            (not (= claim1 claim2))
-            (overlap? (second claim1) (second claim2))
-          )
-        ]
-        (first claim1)
-      )
-      set
+  (overlaps claims)
+
+  (->>
+    claims
+    expand-claims
+    (take 10)
     )
-  )
+
+  (count (expand-claims claims))
+
+  (first
+    (filter
+      (fn [[k v]]
+        (not-any? (set (overlaps claims)) v)
+        )
+      (expand-claims claims)
+      )
+    )
+  (overlap? [1 1 2 2] [2 1 3 2])
+  (overlap? [1 1 2 2] [1 1 2 2])
+  (overlap? [1 1 1 1] [1 2 1 2])
+
+  (with-overlaps "#100")
+
+  (remove with-overlaps (map first (claims-to-boundaries claims)))
+
+  (def with-overlaps
+    (let
+        [
+         boundaries (claims-to-boundaries claims)
+         ]
+      (set
+        (for
+            [
+             claim1 boundaries
+             claim2 boundaries
+             :when
+             (and
+               (not= claim1 claim2)
+               (overlap? (second claim1) (second claim2))
+               )
+             ]
+          (first claim1)
+          )
+        )
+      )
+    )
+
 )
-
-(with-overlaps "#100")
-
-(filter (complement with-overlaps) (map first (claims-to-boundaries claims)))
