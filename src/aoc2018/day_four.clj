@@ -1081,7 +1081,7 @@
   (assoc record :minute (minute record)))
 
 (comment
-  
+
   (with-minute {:datetime "1518-03-03 01:00"})
 
   (->>
@@ -1103,6 +1103,6 @@
           (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
     (map with-minute)
     (group-by :guard)
-    )
+  )
 
 )
