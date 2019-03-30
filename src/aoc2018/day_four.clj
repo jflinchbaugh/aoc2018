@@ -1080,16 +1080,45 @@
   [record]
   (assoc record :minute (minute record)))
 
+(defn durations [minutes]
+  (->>
+    minutes
+    (partition 2)
+    (map #(- (second %) (first %))))
+  )
+
+(defn total-minutes [records]
+  (->>
+    records
+    (map :minute)
+    durations
+    (reduce +)
+    ))
+
+(defn map-value [f map]
+  (reduce (fn [m [k v]] (assoc m k (f v))) {} map))
+
 (comment
+  (->>
+    [1 2 3 4]
+    (partition 2)
+    (map #(- (second %) (first %))))
 
   (with-minute {:datetime "1518-03-03 01:00"})
 
-  (->>
-   input
-   to-lines
-   (map to-record)
-   date-guard-map
-   )
+
+  (let [
+        records (->> input to-lines (map to-record))
+        ]
+    (map 
+     #(get-guard 
+       (date-guard-map records)
+       %
+       )
+     records
+    )
+  )
+
 
   (->>
     input
@@ -1103,6 +1132,7 @@
           (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
     (map with-minute)
     (group-by :guard)
+    (map-value total-minutes)
   )
 
 )

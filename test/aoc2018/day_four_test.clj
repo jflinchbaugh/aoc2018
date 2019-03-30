@@ -5,7 +5,7 @@
 (deftest test-to-lines
   (testing "to-lines splits, trims, and drops blank lines"
     (is (=
-         '("line1" "line2")
+         `("line1" "line2")
          (to-lines "
   line1
 
@@ -80,3 +80,16 @@ line2
   (is (nil? (parse-int "bad")))
   (is (nil? (parse-int nil)))
   )
+
+(deftest test-durations
+  (is (= [5 5] (durations [0 5 10 15]))))
+
+(deftest test-total-minutes
+  (is (= 10 (total-minutes
+              [{:minute 0}
+               {:minute 5}
+               {:minute 10}
+               {:minute 15}]))))
+
+(deftest test-map-value
+  (is (= {:a 2 :b 3} (map-value inc {:a 1 :b 2}))))
