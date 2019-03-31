@@ -1098,6 +1098,24 @@
 (defn map-value [f map]
   (reduce (fn [m [k v]] (assoc m k (f v))) {} map))
 
+(defn guard-total-minutes
+  "provide a map of guard numbers to a list of total minutes"
+  [input]
+  (->>
+    input
+    to-lines
+    sort
+    (map to-record)
+    (filter (complement guard?))
+    (map
+      (partial with-guard-by-date
+        #(get-guard
+           (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
+    (map with-minute)
+    (group-by :guard)
+    (map-value total-minutes)
+    ))
+
 (comment
   (->>
     [1 2 3 4]
@@ -1122,17 +1140,9 @@
 
   (->>
     input
-    to-lines
-    sort
-    (map to-record)
-    (filter (complement guard?))
-    (map
-      (partial with-guard-by-date
-        #(get-guard
-          (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
-    (map with-minute)
-    (group-by :guard)
-    (map-value total-minutes)
+    guard-total-minutes
+    (map second)
+    (apply max)
   )
 
 )
