@@ -1011,8 +1011,8 @@
 
 (defn to-lines [input]
   (remove str/blank?
-    (map str/trim
-      (str/split input #"\n"))))
+          (map str/trim
+               (str/split input #"\n"))))
 
 (defn to-record [line]
   (let [m (re-matches #"\[(.*)\] (.*)" line)]
@@ -1035,45 +1035,40 @@
    guard-by-date
    {}
    (filter
-     guard?
-     (sort-by
-       :datetime
-       records))
-  )
-)
+    guard?
+    (sort-by
+     :datetime
+     records))))
 
 (defn get-guard
-  (
-   [t]
+  ([t]
    (get-guard (->> input to-lines (map to-record) date-guard-map) t))
   ([m t]
    (->> m
-     keys
-     sort
-     reverse
-     (filter
-       #(>= 0 (compare % t)))
-     first
-     (get m)
-     )))
+        keys
+        sort
+        reverse
+        (filter
+         #(>= 0 (compare % t)))
+        first
+        (get m))))
 
 (defn with-guard-by-date [lookup record]
   (assoc record :guard (lookup record)))
 
 (defn parse-int [s]
   (if (and (not (nil? s)) (re-matches #"\d+" s))
-      (Integer/parseInt s)))
+    (Integer/parseInt s)))
 
 (defn minute
   "pull the minute out of a record"
   [record]
   (->>
-    record
-    :datetime
-    (re-matches #".*:(\d+)")
-    last
-    parse-int
-    ))
+   record
+   :datetime
+   (re-matches #".*:(\d+)")
+   last
+   parse-int))
 
 (defn with-minute
   "augment a record with a :minute from the :datetime"
@@ -1082,18 +1077,16 @@
 
 (defn durations [minutes]
   (->>
-    minutes
-    (partition 2)
-    (map #(- (second %) (first %))))
-  )
+   minutes
+   (partition 2)
+   (map #(- (second %) (first %)))))
 
 (defn total-minutes [records]
   (->>
-    records
-    (map :minute)
-    durations
-    (reduce +)
-    ))
+   records
+   (map :minute)
+   durations
+   (reduce +)))
 
 (defn map-value [f map]
   (reduce (fn [m [k v]] (assoc m k (f v))) {} map))
@@ -1102,47 +1095,81 @@
   "provide a map of guard numbers to a list of total minutes"
   [input]
   (->>
-    input
-    to-lines
-    sort
-    (map to-record)
-    (filter (complement guard?))
-    (map
-      (partial with-guard-by-date
-        #(get-guard
-           (->> input to-lines (map to-record) date-guard-map (:datetime %)))))
-    (map with-minute)
-    (group-by :guard)
-    (map-value total-minutes)
-    ))
+   input
+   to-lines
+   sort
+   (map to-record)
+   (filter (complement guard?))
+   (map
+    (partial with-guard-by-date
+             #(get-guard
+               (->>
+                input to-lines
+                (map to-record)
+                date-guard-map
+                (:datetime %)))))
+   (map with-minute)
+   (group-by :guard)
+   (map-value total-minutes)))
+
+(defn guard-times
+  "provide a map of guard numbers to a list records"
+  [input]
+  (->>
+   input
+   to-lines
+   sort
+   (map to-record)
+   (filter (complement guard?))
+   (map
+    (partial with-guard-by-date
+             #(get-guard
+               (->>
+                input to-lines
+                (map to-record)
+                date-guard-map
+                (:datetime %)))))
+   (map with-minute)
+   (group-by :guard)))
 
 (comment
   (->>
-    [1 2 3 4]
-    (partition 2)
-    (map #(- (second %) (first %))))
+   [1 2 3 4]
+   (partition 2)
+   (map #(- (second %) (first %))))
 
   (with-minute {:datetime "1518-03-03 01:00"})
 
-
-  (let [
-        records (->> input to-lines (map to-record))
-        ]
-    (map 
-     #(get-guard 
+  (let [records (->> input to-lines (map to-record))]
+    (map
+     #(get-guard
        (date-guard-map records)
-       %
-       )
-     records
-    )
-  )
+       %)
+     records))
 
-
-  (->>
-    input
-    guard-total-minutes
-    (map second)
-    (apply max)
-  )
+  (let [gtm (guard-total-minutes input)
+        mtg (clojure.set/map-invert gtm)
+        gt (guard-times input)
+        guard-number (->>
+                      gtm
+                      (map second)
+                      (apply max)
+                      mtg)
+        minute-freq (->>
+                     guard-number
+                     gt
+                     (map :minute)
+                     (partition 2)
+                     (map #(apply range %))
+                     flatten
+                     (group-by identity)
+                     (map-value count))
+        max-freq (->>
+                  minute-freq
+                  (map second)
+                  (apply max))
+        ftm (clojure.set/map-invert minute-freq)
+        sleepiest-minute (ftm max-freq)]
+    (* (Integer/parseInt guard-number) sleepiest-minute))
 
 )

@@ -62,16 +62,12 @@
   )
 )
 
-(flags->string [true true false])
-
 (defn flags->indices [start flags]
   ; (map (fn [v f] (if f v 0)) (map #(- % 2 gens) (range)))
   ;(map (fn [v f] (if f v 0)) (map #(- % 2)
   (map #(+ %  start) (range 0 (count flags)))
   ; ))
 )
-
-(flags->indices -2 [true false true false true false])
 
 (def mappings
   (as->
@@ -84,8 +80,6 @@
     (into {} v)
   )
 )
-
-(if false \# \.)
 
 (defn next-state [state]
   (as->
@@ -148,10 +142,6 @@
   )
 )
 
-(pot-sum 20)
-
-(string->flags initial-state)
-
 (t/deftest my-test
   (t/is
     (=
@@ -164,7 +154,3 @@
     )
   )
 )
-
-(t/run-all-tests)
-
-(prn mappings)
