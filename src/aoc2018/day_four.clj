@@ -1132,44 +1132,31 @@
    (map with-minute)
    (group-by :guard)))
 
-(comment
-  (->>
-   [1 2 3 4]
-   (partition 2)
-   (map #(- (second %) (first %))))
-
-  (with-minute {:datetime "1518-03-03 01:00"})
-
-  (let [records (->> input to-lines (map to-record))]
-    (map
-     #(get-guard
-       (date-guard-map records)
-       %)
-     records))
-
+(defn day-four-part-one [input]
   (let [gtm (guard-total-minutes input)
-        mtg (clojure.set/map-invert gtm)
-        gt (guard-times input)
         guard-number (->>
-                      gtm
-                      (map second)
-                      (apply max)
-                      mtg)
+                       gtm
+                       (map second)
+                       (apply max)
+                       ((clojure.set/map-invert gtm)))
         minute-freq (->>
-                     guard-number
-                     gt
-                     (map :minute)
-                     (partition 2)
-                     (map #(apply range %))
-                     flatten
-                     (group-by identity)
-                     (map-value count))
-        max-freq (->>
-                  minute-freq
-                  (map second)
-                  (apply max))
+                      guard-number
+                      ((guard-times input))
+                      (map :minute)
+                      (partition 2)
+                      (map #(apply range %))
+                      flatten
+                      (group-by identity)
+                      (map-value count))
         ftm (clojure.set/map-invert minute-freq)
-        sleepiest-minute (ftm max-freq)]
-    (* (Integer/parseInt guard-number) sleepiest-minute))
+        sleepiest-minute (ftm (->>
+                                minute-freq
+                                (map second)
+                                (apply max)))]
+    (* (Integer/parseInt guard-number) sleepiest-minute)))
+
+(comment
+
+  (day-four-part-one input)
 
 )

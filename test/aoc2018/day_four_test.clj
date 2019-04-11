@@ -93,3 +93,6 @@ line2
 
 (deftest test-map-value
   (is (= {:a 2 :b 3} (map-value inc {:a 1 :b 2}))))
+
+(deftest test-day-four-part-one
+  (is (= 39422 (day-four-part-one input))))
