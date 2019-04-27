@@ -96,3 +96,6 @@ line2
 
 (deftest test-day-four-part-one
   (is (= 39422 (day-four-part-one input))))
+
+(deftest test-final-answer
+  (is (= 20 (final-answer "10" 2))))

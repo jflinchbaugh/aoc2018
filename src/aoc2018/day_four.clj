@@ -1132,6 +1132,11 @@
    (map with-minute)
    (group-by :guard)))
 
+(defn final-answer
+  "calculate the final answer as reqired for verification on the site"
+  [guard-number minute]
+  (* (Integer/parseInt guard-number) minute))
+
 (defn day-four-part-one [input]
   (let [gtm (guard-total-minutes input)
         guard-number (->>
@@ -1153,7 +1158,7 @@
                                 minute-freq
                                 (map second)
                                 (apply max)))]
-    (* (Integer/parseInt guard-number) sleepiest-minute)))
+    (final-answer guard-number sleepiest-minute)))
 
 (comment
 
