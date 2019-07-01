@@ -9,14 +9,14 @@
 
 (defn collapse [input]
   (let [c1 (->> input
-             (partition-all 2)
-             (remove reacts?)
-             flatten)
+                (partition-all 2)
+                (remove reacts?)
+                flatten)
         c2 (->> c1
-             rest
-             (partition-all 2)
-             (remove reacts?)
-             flatten)
+                rest
+                (partition-all 2)
+                (remove reacts?)
+                flatten)
         res (concat [(first c1)] c2)]
     res
     (if (= input res)
@@ -24,4 +24,16 @@
       (recur res))))
 
 (count (collapse input))
-    
+
+(def chars (map (comp str char) (range (int \a) (inc (int \z)))))
+
+(min (for [c chars]
+       (->> input
+            (remove #(.equalsIgnoreCase c %))
+            collapse
+            count)))
+
+(min (pmap (fn [c] (->> input
+                     (remove #(.equalsIgnoreCase c %))
+                     collapse
+                     count)) chars))
